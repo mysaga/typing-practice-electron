@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>타자 연습</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sunflower', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .practice-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="%23ffffff20"/></svg>');
+        }
+
+        .history-container {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-left: 3px dashed #ff8b94;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            width: 90%;
+            max-width: 800px;
+            border: 3px solid #ff8b94;
+        }
+
+        h1 {
+            color: #ff8b94;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        .mode-buttons, .category-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn, .category-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: #ffd3b6;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn:hover, .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .mode-btn.active, .category-btn.active {
+            background-color: #ff8b94;
+            transform: scale(1.05);
+        }
+
+        .text-display {
+            font-size: 28px;
+            margin: 30px 0;
+            line-height: 1.6;
+            color: #555;
+            min-height: 120px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid #ffd3b6;
+        }
+
+        .input-area {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            border: 3px solid #ffd3b6;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-family: 'Sunflower', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .input-area:focus {
+            outline: none;
+            border-color: #ff8b94;
+            box-shadow: 0 0 10px rgba(255,139,148,0.3);
+        }
+
+        .stats {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #666;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .stats p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats span {
+            color: #ff8b94;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .save-result {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #ff8b94;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+            font-family: 'Sunflower', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .save-result:hover {
+            background-color: #ff6b7a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .history-title {
+            color: #ff8b94;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px dashed #ffd3b6;
+            text-align: center;
+        }
+
+        .result-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid #ffd3b6;
+            transition: all 0.3s;
+        }
+
+        .result-item:hover {
+            transform: translateX(-5px);
+            border-color: #ff8b94;
+        }
+
+        .result-item strong {
+            color: #ff8b94;
+            font-size: 1.1em;
+        }
+
+        /* 스크롤바 스타일링 */
+        .history-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .history-container::-webkit-scrollbar-thumb {
+            background: #ffd3b6;
+            border-radius: 4px;
+        }
+
+        .history-container::-webkit-scrollbar-thumb:hover {
+            background: #ff8b94;
+        }
+
+        /* 애니메이션 효과 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .mode-btn.active, .category-btn.active {
+            animation: bounce 0.5s ease infinite;
+        }
+
+        /* 타이머 스타일 */
+        .timer-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 3px solid #ff8b94;
+            font-size: 1.5em;
+            color: #ff8b94;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            border: 3px solid #ff8b94;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-title {
+            color: #ff8b94;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 3px solid #ffd3b6;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-family: 'Sunflower', sans-serif;
+            text-align: center;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #ff8b94;
+            box-shadow: 0 0 10px rgba(255,139,148,0.3);
+        }
+
+        .modal-button {
+            padding: 12px 30px;
+            background-color: #ff8b94;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-family: 'Sunflower', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .modal-button:hover {
+            background-color: #ff6b7a;
+            transform: translateY(-2px);
+        }
+
+        .modal.error {
+            color: #ff6b7a;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        남은 시간: <span id="timer">20:00</span>
+    </div>
+    
+    <div class="main-container">
+        <div class="practice-container">
+            <div class="container">
+                <h1>타자 연습</h1>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="word">단어 연습</button>
+                    <button class="mode-btn" data-mode="sentence">문장 연습</button>
+                </div>
+                <div class="category-buttons">
+                    <button class="category-btn active" data-category="country">나라</button>
+                    <button class="category-btn" data-category="city">도시</button>
+                    <button class="category-btn" data-category="plant">식물</button>
+                    <button class="category-btn" data-category="animal">동물</button>
+                </div>
+                <div class="text-display" id="textDisplay">
+                    여기에 연습할 텍스트가 표시됩니다.
+                </div>
+                <input type="text" class="input-area" id="typingInput">
+                <div class="stats">
+                    <p>타수: <span id="charCount">0</span></p>
+                    <p>정확도: <span id="accuracy">0</span>%</p>
+                    <p>타자 속도: <span id="typingSpeed">0</span> 타/분</p>
+                    <p>경과 시간: <span id="elapsedTime">0</span>초</p>
+                </div>
+            </div>
+        </div>
+        <div class="history-container">
+            <h2 class="history-title">연습 기록</h2>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h2 class="modal-title">연습 시간이 다 되었습니다.</h2>
+            <p>암호를 입력해주세요.</p>
+            <input type="password" class="modal-input" id="passwordInput" placeholder="암호 입력">
+            <div class="modal error" id="passwordError" style="display: none;">잘못된 암호입니다.</div>
+            <button class="modal-button" id="passwordSubmit">확인</button>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

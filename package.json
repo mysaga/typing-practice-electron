@@ -1,0 +1,28 @@
+{
+    "name": "typing-practice",
+    "version": "1.0.0",
+    "description": "초등학생을 위한 타자 연습 프로그램",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder --win portable"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "electron": "^28.2.0",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.typing.practice",
+        "productName": "타자 연습",
+        "win": {
+            "target": "portable",
+            "icon": "icon.ico"
+        }
+    },
+    "dependencies": {
+        "git": "^0.1.5",
+        "ini": "^4.1.3"
+    }
+}
